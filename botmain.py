@@ -33,6 +33,9 @@ _raw_sheet_id = os.environ.get("GOOGLE_SHEET_ID", "")
 _match = re.search(r"/spreadsheets/d/([a-zA-Z0-9_-]+)", _raw_sheet_id)
 GOOGLE_SHEET_ID = _match.group(1) if _match else _raw_sheet_id
 GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+print("TOKEN:",bool(TELEGRAM_TOKEN))
+print("SHEET:",bool(GOOGLE_SHEET_ID))
+print("JSON:",bool(GOOGLE_SERVICE_ACCOUNT_JSON))
 
 WEEKLY_SEND_DAY = "mon"
 WEEKLY_SEND_HOUR = 9
