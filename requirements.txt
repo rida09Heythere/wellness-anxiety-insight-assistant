@@ -2,7 +2,6 @@ Python-Telegram-Bot
 gspread
 oauth2client
 pandas
-skitlearn
 matplotlib
 flask
-ML
+
