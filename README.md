@@ -1,6 +1,10 @@
 # mental-health-cycle-tracker
-#Mental Health & Cycle Tracker A machine learning project analyzing the connection between menstrual cycle phases and anxiety patterns using real participant data.
+
+
+##Mental Health & Cycle Tracker A machine learning project analyzing the connection between menstrual cycle phases and anxiety patterns using real participant data.
 A Telegram chatbot that collects menstrual cycle , sleeep exerise , anxiety , triggers  , and coping method data . Responses are stored in GOgogle Sheets and analyzed using Python , data identify patterns and provide personalized wellness insights.
+
+
 ##Features
 -Telegram chatbot for data collection
 -Google Sheets integration for real-time storage
@@ -11,6 +15,8 @@ A Telegram chatbot that collects menstrual cycle , sleeep exerise , anxiety , tr
 -Exploratory Data analysis(EDA)
 -Machine Learning-based pattern analysis
 -Personalized wellness insights
+
+
 ##Tech Stack
 -Python
 -telegram Bot API
