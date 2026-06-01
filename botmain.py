@@ -467,3 +467,4 @@ if __name__ == "__main__":
     app = build_app()
     logger.info("Bot is running...")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
+print("TOKEN VALUE:",TELEGRAM_TOKEN)
