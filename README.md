@@ -24,6 +24,10 @@
 - Telegram Bot API
 - Google Colab
 - GitHub
+- Scikit-Learn
+- Flask
+- ML
+- Numpy
 
 **Workflow**
 
