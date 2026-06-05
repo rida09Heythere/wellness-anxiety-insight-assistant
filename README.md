@@ -41,3 +41,28 @@
 **Project Objective**
 
 To analyze how lifestyle factors, anxiety triggers, coping methods, and wellness habits relate to anxiety levels and generate personalized, data-driven wellness insights.
+
+**Exploratory Data Analysis (EDA)**
+
+**The collected dataset was cleaned and analyzed using Python and Pandas to identify patterns associated with anxiety and wellness.**
+
+**Key Findings**
+
+- The dataset currently contains responses from both male and female participants.
+- Relationship concerns, family issues, career-related stress, and financial worries emerged as the most common anxiety triggers.
+- Multiple coping methods were reported by participants, with eating, music, sleeping, and consuming digital content being among the most frequently used.
+- Sleep duration showed a weak negative correlation with anxiety scores (approximately -0.18), suggesting that sleep alone may not strongly explain anxiety levels in the current dataset.
+- Anxiety levels varied across menstrual cycle phases among female participants, although lifestyle and situational factors appeared to have a stronger influence than cycle phase alone.
+- Common feelings reported during anxious periods included stress, sadness, bad mood, and cramps.
+- The analysis indicates that anxiety is influenced by multiple factors, including personal relationships, family environment, career concerns, financial pressure, coping behaviors, and overall lifestyle patterns.
+
+**Data Analysis Techniques Used**
+
+- Data Cleaning and Preprocessing
+- Handling Missing Values and Duplicates
+- Exploratory Data Analysis (EDA)
+- Correlation Analysis
+- Category Frequency Analysis
+- Gender-Based Comparisons
+- Menstrual Cycle Phase Analysis
+- Data Visualization using Matplotlib and Pandas
