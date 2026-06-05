@@ -52,7 +52,7 @@ SUBSCRIBERS_FILE = DATA_DIR / "subscribers.json"
 (
     Q_GENDER,
     Q_NAME,
-    Q_PHASE,           # female only
+    Q_PHASE,                  # female only
     Q_SLEEP,
     Q_EXERCISE,
     Q_ANXIETY,
@@ -61,9 +61,11 @@ SUBSCRIBERS_FILE = DATA_DIR / "subscribers.json"
     Q_COPING,
     Q_COPING_OTHER,
     Q_SUGGESTION,
-    Q_ANXIETY_PHASE,   # female only
-    Q_SYMPTOMS,        # female only
-) = range(13)
+    Q_ANXIETY_PHASE,          # female only
+    Q_SYMPTOMS,               # female only
+    Q_ANXIETY_FEELINGS,       # male only
+    Q_ANXIETY_FEELINGS_OTHER, # male only
+) = range(15)
 
 # ── Static options ─────────────────────────────────────────────────────────────
 GENDERS       = ["Female", "Male"]
@@ -80,6 +82,10 @@ COPING_OPTS = [
     "Self harm", "None", "Other",
 ]
 SUGGESTION_OPTS = ["Yes", "Partially", "No", "First time"]
+
+ANXIETY_FEELINGS_OPTS = [
+    "Overthinking", "Panic", "Scared", "Fear", "Shame", "Other",
+]
 
 SYMPTOMS_BY_PHASE = {
     "Menstrual": [
@@ -107,10 +113,10 @@ SYMPTOM_QUESTION_BY_PHASE = {
     "Luteal":     "🌕 What are you *experiencing* in your Luteal phase?\n_(select all that apply, then tap ✓ Done)_",
 }
 
-# Female = 11 questions, Male = 8 questions
+# Female = 11 questions, Male = 9 questions
 # Q numbers for shared questions differ by gender:
 #   Female: Gender=1 Name=2 Phase=3 Sleep=4 Exercise=5 Anxiety=6 Trigger=7 Coping=8 Suggestion=9 AnxPhase=10 Symptoms=11
-#   Male:   Gender=1 Name=2          Sleep=3 Exercise=4 Anxiety=5 Trigger=6 Coping=7 Suggestion=8
+#   Male:   Gender=1 Name=2          Sleep=3 Exercise=4 Anxiety=5 Trigger=6 Coping=7 Suggestion=8 Feelings=9
 Q_NUM = {
     "female": {
         "name": "2/11", "phase": "3/11", "sleep": "4/11", "exercise": "5/11",
@@ -118,8 +124,9 @@ Q_NUM = {
         "suggestion": "9/11", "anxiety_phase": "10/11", "symptoms": "11/11",
     },
     "male": {
-        "name": "2/8", "sleep": "3/8", "exercise": "4/8",
-        "anxiety": "5/8", "trigger": "6/8", "coping": "7/8", "suggestion": "8/8",
+        "name": "2/9", "sleep": "3/9", "exercise": "4/9",
+        "anxiety": "5/9", "trigger": "6/9", "coping": "7/9",
+        "suggestion": "8/9", "feelings": "9/9",
     },
 }
 
@@ -213,7 +220,7 @@ def save_response_to_sheet(user_id: int, answers: dict) -> bool:
             answers.get("coping", ""),
             answers.get("suggestion", ""),
             answers.get("anxiety_phase", "N/A") if female else "N/A",
-            answers.get("symptoms", "N/A") if female else "N/A",
+            answers.get("symptoms", "N/A"),  # females=phase symptoms, males=anxiety feelings
         ]
         logger.info(f"Appending row: {row}")
         sheet.append_row(row)
@@ -528,9 +535,9 @@ async def q_suggestion(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return Q_SUGGESTION
     context.user_data["answers"]["suggestion"] = text
 
-    # Males finish here; females continue to cycle questions
+    # Males go to feelings question; females continue to cycle questions
     if not is_female(context):
-        return await finish_checkin(update.message, context, update.effective_user)
+        return await _ask_anxiety_feelings(update.message, context)
 
     n = qnum(context, "anxiety_phase")
     await update.message.reply_text(
@@ -590,6 +597,57 @@ async def q_symptoms_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     return Q_SYMPTOMS
 
 
+# ── Anxiety feelings (male only) ───────────────────────────────────────────────
+async def _ask_anxiety_feelings(message, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["feelings_selected"] = []
+    n = qnum(context, "feelings")
+    kb = multiselect_kb(ANXIETY_FEELINGS_OPTS, [], "feelings")
+    await message.reply_text(
+        f"💭 *Q{n} — What do you feel during anxiety?*\n\n"
+        "_(tap to select all that apply, then tap ✓ Done)_",
+        parse_mode="Markdown",
+        reply_markup=kb,
+    )
+    return Q_ANXIETY_FEELINGS
+
+
+async def q_anxiety_feelings_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    _, value = query.data.split(":", 1)
+    selected: list = context.user_data.setdefault("feelings_selected", [])
+
+    if value == "DONE":
+        if not selected:
+            await query.answer("Please select at least one option.", show_alert=True)
+            return Q_ANXIETY_FEELINGS
+        context.user_data["answers"]["symptoms"] = ", ".join(selected)
+        await query.edit_message_reply_markup(reply_markup=None)
+        if "Other" in selected:
+            await query.message.reply_text(
+                "✏️ You selected *Other* — please *describe what you feel*:",
+                parse_mode="Markdown",
+            )
+            return Q_ANXIETY_FEELINGS_OTHER
+        return await finish_checkin(query.message, context, update.effective_user)
+
+    if value in selected:
+        selected.remove(value)
+    else:
+        selected.append(value)
+    await query.edit_message_reply_markup(
+        reply_markup=multiselect_kb(ANXIETY_FEELINGS_OPTS, selected, "feelings")
+    )
+    return Q_ANXIETY_FEELINGS
+
+
+async def q_anxiety_feelings_other(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    extra = update.message.text.strip()
+    parts = [p.strip() for p in context.user_data["answers"].get("symptoms", "").split(",")]
+    context.user_data["answers"]["symptoms"] = ", ".join(extra if p == "Other" else p for p in parts)
+    return await finish_checkin(update.message, context, update.effective_user)
+
+
 # ── Finish ─────────────────────────────────────────────────────────────────────
 async def finish_checkin(message, context: ContextTypes.DEFAULT_TYPE, user):
     answers = context.user_data.get("answers", {})
@@ -616,6 +674,8 @@ async def finish_checkin(message, context: ContextTypes.DEFAULT_TYPE, user):
             f"🔍 Most anxious phase: {answers.get('anxiety_phase', '—')}\n"
             f"🩺 Symptoms: {answers.get('symptoms', '—')}\n"
         )
+    else:
+        summary += f"💭 Anxiety feelings: {answers.get('symptoms', '—')}\n"
     summary += "\n"
     summary += "📊 Saved to Google Sheets!" if saved else "⚠️ Could not save to Google Sheets."
 
@@ -686,8 +746,10 @@ def build_app() -> Application:
             Q_COPING:        [CallbackQueryHandler(q_coping_callback, pattern=r"^coping:")],
             Q_COPING_OTHER:  [MessageHandler(filters.TEXT & ~filters.COMMAND, q_coping_other)],
             Q_SUGGESTION:    [MessageHandler(filters.TEXT & ~filters.COMMAND, q_suggestion)],
-            Q_ANXIETY_PHASE: [MessageHandler(filters.TEXT & ~filters.COMMAND, q_anxiety_phase)],
-            Q_SYMPTOMS:      [CallbackQueryHandler(q_symptoms_callback, pattern=r"^symptoms:")],
+            Q_ANXIETY_PHASE:          [MessageHandler(filters.TEXT & ~filters.COMMAND, q_anxiety_phase)],
+            Q_SYMPTOMS:               [CallbackQueryHandler(q_symptoms_callback, pattern=r"^symptoms:")],
+            Q_ANXIETY_FEELINGS:       [CallbackQueryHandler(q_anxiety_feelings_callback, pattern=r"^feelings:")],
+            Q_ANXIETY_FEELINGS_OTHER: [MessageHandler(filters.TEXT & ~filters.COMMAND, q_anxiety_feelings_other)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
         allow_reentry=True,
