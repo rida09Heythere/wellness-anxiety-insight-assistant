@@ -130,6 +130,91 @@ Q_NUM = {
     },
 }
 
+RECOMMENDATIONS = {
+    "Family": [
+        "I know it hurts when your own people makes you doubt yourself, hurt you, doesnt support you or misunderstand you",
+        "but always remember your family doesnt define your worth YOU DO",
+        "Try to communicate your concerns calmly with them BUT do not overexplain again and again — accept you cant change some people and let it go, continue to focus on yourself, drop expectations and respect yourself",
+        "Avoid chaos and drama — prioritize your mental peace at all cost and keep growing",
+        "Just focus on what you can do and dont hate anyone, just accept the fact and focus on yourself, make friends and be happy.",
+        "YOU ARE LOVELY",
+    ],
+    "Studies": [
+        "I know you're trying as much as you can",
+        "Relax and study what makes you curious and hooked",
+        "Set your goals right — dont try to study everything together, focus on your field",
+        "Make a strategic timetable",
+        "Make time for yourself — take regular breaks during study sessions and a day off once a week, ITS OKAY",
+        "Dont mug up before exams, just revise what you already learned",
+        "Break topics into smaller parts and learn from zero to understand the core — INTERESTING SESSION",
+        "Eat healthy, be active, get sunlight, take breaks and study consistently from the start",
+        "YOU CAN DO IT",
+    ],
+    "Career": [
+        "I know its a big thing in your life and you are worried whether it will work or not",
+        "But remember your hard work today wont go to waste with right focus and decisions and avoiding distractions",
+        "Just be consistent with your work and skills and keep upgrading yourself in your field until you master it",
+        "Live and make your life together — have fun too, thats why you're earning after all! Dont forget yourself in the process",
+        "Break goals into smaller milestones",
+        "Focus on skills development, lessons and keep learning",
+        "Look at what jobs are needed the most and work on it",
+        "Make a good network and learn from them.",
+    ],
+    "Future": [
+        "I know you are worried — its hard when we dont know whats ahead of us",
+        "But you're the author of your own story so dont worry!!",
+        "Do what is in your control, make mistakes, learn from them — thats what life is about! YOU ARE DOING GREAT",
+        "Dont let your fear control your future, live it to the fullest. You will handle it, Do good, Be happy.",
+        "Set short-term goals and focus on today and this year",
+        "Track your progress, be consistent, be disciplined, have fun, live and make your life.",
+    ],
+    "Low self-esteem": [
+        "Dont think you're less because of anyone or anything — you are the one who will define your worth",
+        "You're not less or late, just preparing for something big",
+        "Before anything, first love yourself — its the most important thing",
+        "Focus on progress rather than perfection — nothing is perfect but your love for yourself will make everything better",
+        "Write down personal strengths, good qualities and achievements — even if its not a big thing, YOU MATTER",
+        "Avoid comparing yourself to others — you are not the one that fits in, you are the one who STANDS OUT!",
+        "You make your own story so dont compare someone's finish line with your start line",
+        "LOVE YOURSELF",
+    ],
+    "Relationship": [
+        "I know you are a good person trying your best — do good and be loyal to all the commitments you made",
+        "Set healthy boundaries with your partner, make them understand you calmly and understand them too — respect each other's emotions and needs",
+        "Communicate ALWAYS — solutions will come, dont give silent treatments or leave things confused or unresolved",
+        "Avoid making big commitments and promises during highly emotional moments",
+        "Live and make your life together — be there for each other, support them, appreciate them, respect their boundaries and needs",
+    ],
+    "Health": [
+        "I know you are struggling and the frustration that you didnt choose this struggle",
+        "DONT GIVE UP — Life is a beautiful journey, make the most of it, do everything that benefits you and that you have control on, forget things you cant do anything about",
+        "You are special — treat yourself that way, do what you wish, become what you can!",
+        "Maintain a healthy lifestyle both physically and mentally",
+        "Maintain a good sleep schedule",
+        "Move your body, get in touch with nature",
+        "Dont hesitate to seek help",
+        "Seek medical advice and treatment for ongoing health concerns",
+    ],
+    "Financial": [
+        "I know money is tight — inflation and increasing needs make financial safety so important. But guess what, after all its just money, YOU CAN DO IT",
+        "Do what you like and what makes you curious",
+        "Learn money-making strategies, trends, business, careers, skills and lessons — once you master a few you can make money in many ways",
+        "Make good connections with people who inspire you financially — network plays a big role and teaches you a lot",
+        "Be consistent in learning and striving — you will make better decisions",
+        "Start saving — its a lifesaver for urgent funds",
+        "Create a budget plan",
+        "Track your spendings",
+        "Spend on valuable things that benefit you long term and help you grow.",
+    ],
+    "Social": [
+        "I know you are worried about how people perceive you — BUT trust me, when you freely live as you are, thats what all matters. Your happiness. Remember you dont fit in, YOU ALWAYS STAND OUT!",
+        "Dont change yourself to impress somebody else or fear what they will think — YOU ARE STRONG!",
+        "Spend time with supportive and kind people",
+        "Practice gradual social exposure and keep making new friends and meeting new people.",
+        "Focus on meaningful interactions over quantity",
+    ],
+}
+
 SHEET_HEADERS = [
     "Date", "Gender", "Name", "Current Phase", "Avg Sleep (hrs/day)",
     "Exercise Frequency", "Anxiety Score (1-10)", "Anxiety Trigger",
@@ -154,6 +239,13 @@ def multiselect_kb(options: list[str], selected: list[str], prefix: str) -> Inli
     ]
     buttons.append([InlineKeyboardButton("✓ Done", callback_data=f"{prefix}:DONE")])
     return InlineKeyboardMarkup(buttons)
+
+
+def md2(text: str) -> str:
+    """Escape a string for MarkdownV2."""
+    for ch in r"\_*[]()~`>#+-=|{}.!":
+        text = text.replace(ch, f"\\{ch}")
+    return text
 
 
 def is_female(context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -654,97 +746,59 @@ async def finish_checkin(message, context: ContextTypes.DEFAULT_TYPE, user):
     female = answers.get("gender", "").lower() == "female"
     saved = save_response_to_sheet(user.id, answers)
 
+    name = answers.get("name", "there")
     summary = (
-        "✅ *Check-in complete! Here's your summary:*\n\n"
-        f"👤 Gender: {answers.get('gender', '—')}\n"
-        f"👋 Name: {answers.get('name', '—')}\n"
+        f"✨ *Weekly Check\\-in Complete\\!* ✨\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"Hey *{md2(name)}*, here's your snapshot for this week:\n\n"
+        f"👤  *Gender* → {md2(answers.get('gender', '—'))}\n"
     )
     if female:
-        summary += f"🌙 Current phase: {answers.get('phase', '—')}\n"
+        summary += f"🌙  *Cycle Phase* → {md2(answers.get('phase', '—'))}\n"
     summary += (
-        f"😴 Avg sleep/day: {answers.get('sleep', '—')} hrs\n"
-        f"🏃 Exercise: {answers.get('exercise', '—')}\n"
-        f"😟 Anxiety score: {answers.get('anxiety', '—')}/10\n"
-        f"⚡ Triggers: {answers.get('trigger', '—')}\n"
-        f"🧘 Coping: {answers.get('coping', '—')}\n"
-        f"💡 Prev. suggestion: {answers.get('suggestion', '—')}\n"
+        f"😴  *Avg Sleep* → {md2(answers.get('sleep', '—'))} hrs/day\n"
+        f"🏃  *Exercise* → {md2(answers.get('exercise', '—'))}\n"
+        f"😟  *Anxiety Score* → {md2(answers.get('anxiety', '—'))} / 10\n"
+        f"⚡  *Triggers* → {md2(answers.get('trigger', '—'))}\n"
+        f"🧘  *Coping* → {md2(answers.get('coping', '—'))}\n"
+        f"💡  *Prev\\. Suggestion* → {md2(answers.get('suggestion', '—'))}\n"
     )
     if female:
         summary += (
-            f"🔍 Most anxious phase: {answers.get('anxiety_phase', '—')}\n"
-            f"🩺 Symptoms: {answers.get('symptoms', '—')}\n"
+            f"🔍  *Most Anxious Phase* → {md2(answers.get('anxiety_phase', '—'))}\n"
+            f"🩺  *Symptoms* → {md2(answers.get('symptoms', '—'))}\n"
         )
     else:
-        summary += f"💭 Anxiety feelings: {answers.get('symptoms', '—')}\n"
-    summary += "\n"
-    summary += "📊 Saved to Google Sheets!" if saved else "⚠️ Could not save to Google Sheets."
-
-    recommendations = {
-    "Career": [
-        "Break career goals into smaller milestones.",
-        "Focus on skill development.",
-        "Create a learning plan."
-    ],
-    "Family": [
-        "Communicate concerns calmly.",
-        "Seek support from trusted family members.",
-        "Focus on what you can control."
-    ],
-    "Financial": [
-        "Create a simple budget.",
-        "Track spending habits.",
-        "Separate needs from wants."
-    ],
-    "Relationship": [
-        "Communicate openly.",
-        "Set healthy boundaries.",
-        "Spend quality time with trusted people."
-    ],
-    "Health": [
-        "Maintain a regular sleep schedule.",
-        "Stay physically active.",
-        "Focus on healthy habits."
-    ],
-    "Studies": [
-        "Break study sessions into smaller chunks.",
-        "Create a realistic study plan.",
-        "Avoid last-minute cramming."
-    ],
-    "Future": [
-        "Focus on short-term goals.",
-        "Avoid overthinking distant outcomes.",
-        "Track small daily progress."
-    ]
-}
-    trigger_text = answers.get("triggers", "")
-
-selected_triggers = [
-    t.strip()
-    for t in trigger_text.split(",")
-]
-
-summary += "\n\n📋 Recommendations:\n\n"
-
-for trigger in selected_triggers:
-
-    if trigger in recommendations:
-
-        summary += f"{trigger}:\n"
-
-        for rec in recommendations[trigger]:
-            summary += f"• {rec}\n"
-
-        summary += "\n"
-
-    else:
-
-        summary += f"{trigger}:\n"
-        summary += "• Focus on what you can control.\n"
-        summary += "• Break the problem into smaller steps.\n"
-        summary += "• Seek support from trusted people.\n\n"
+        summary += f"💭  *Anxiety Feelings* → {md2(answers.get('symptoms', '—'))}\n"
+    summary += "\n━━━━━━━━━━━━━━━━━━━━\n"
+    summary += "📊 _Saved to Google Sheets\\!_" if saved else "⚠️ _Could not save to Google Sheets\\._"
 
     context.user_data.clear()
-    await message.reply_text(summary, parse_mode="Markdown", reply_markup=ReplyKeyboardRemove())
+    await message.reply_text(summary, parse_mode="MarkdownV2", reply_markup=ReplyKeyboardRemove())
+
+    # ── Personalised recommendations based on anxiety triggers ──────────────────
+    selected_triggers = [t.strip() for t in answers.get("trigger", "").split(",") if t.strip()]
+    if selected_triggers:
+        rec_text = "💌 *Personalised just for you* 💌\n"
+        rec_text += "━━━━━━━━━━━━━━━━━━━━\n\n"
+        for trigger in selected_triggers:
+            tips = RECOMMENDATIONS.get(trigger)
+            if tips:
+                rec_text += f"🎯 *{md2(trigger)}*\n"
+                for i, tip in enumerate(tips, 1):
+                    rec_text += f"  {i}\\. {md2(tip)}\n"
+                rec_text += "\n"
+            else:
+                rec_text += (
+                    f"🎯 *{md2(trigger)}*\n"
+                    "  1\\. Focus on what you can control\\.\n"
+                    "  2\\. Break the problem into smaller steps\\.\n"
+                    "  3\\. Seek support from trusted people\\.\n\n"
+                )
+        rec_text += "━━━━━━━━━━━━━━━━━━━━\n"
+        rec_text += f"_You've got this, {md2(name)}\\! One day at a time_ 💪"
+        await message.reply_text(rec_text, parse_mode="MarkdownV2")
+
     return ConversationHandler.END
 
 
