@@ -679,6 +679,70 @@ async def finish_checkin(message, context: ContextTypes.DEFAULT_TYPE, user):
     summary += "\n"
     summary += "📊 Saved to Google Sheets!" if saved else "⚠️ Could not save to Google Sheets."
 
+    recommendations = {
+    "Career": [
+        "Break career goals into smaller milestones.",
+        "Focus on skill development.",
+        "Create a learning plan."
+    ],
+    "Family": [
+        "Communicate concerns calmly.",
+        "Seek support from trusted family members.",
+        "Focus on what you can control."
+    ],
+    "Financial": [
+        "Create a simple budget.",
+        "Track spending habits.",
+        "Separate needs from wants."
+    ],
+    "Relationship": [
+        "Communicate openly.",
+        "Set healthy boundaries.",
+        "Spend quality time with trusted people."
+    ],
+    "Health": [
+        "Maintain a regular sleep schedule.",
+        "Stay physically active.",
+        "Focus on healthy habits."
+    ],
+    "Studies": [
+        "Break study sessions into smaller chunks.",
+        "Create a realistic study plan.",
+        "Avoid last-minute cramming."
+    ],
+    "Future": [
+        "Focus on short-term goals.",
+        "Avoid overthinking distant outcomes.",
+        "Track small daily progress."
+    ]
+}
+    trigger_text = answers.get("triggers", "")
+
+selected_triggers = [
+    t.strip()
+    for t in trigger_text.split(",")
+]
+
+summary += "\n\n📋 Recommendations:\n\n"
+
+for trigger in selected_triggers:
+
+    if trigger in recommendations:
+
+        summary += f"{trigger}:\n"
+
+        for rec in recommendations[trigger]:
+            summary += f"• {rec}\n"
+
+        summary += "\n"
+
+    else:
+
+        summary += f"{trigger}:\n"
+        summary += "• Focus on what you can control.\n"
+        summary += "• Break the problem into smaller steps.\n"
+        summary += "• Seek support from trusted people.\n\n"
+
     context.user_data.clear()
     await message.reply_text(summary, parse_mode="Markdown", reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
