@@ -1,8 +1,8 @@
-**Wellness & Anxiety Insight Assistant**
+##Wellness & Anxiety Insight Assistant**
 
 **A data-driven wellness analytics platform that collects user wellness information through a Telegram chatbot, stores responses in Google Sheets, and uses data analysis and machine learning techniques to identify patterns associated with anxiety.**
 
-**Features**
+##Features**
 
 - Telegram-based wellness check-ins
 - Anxiety tracking and analysis
@@ -19,7 +19,7 @@
 - Custom trigger handling
 
 
-**Tech Stack**
+##Tech Stack**
 
 - Python
 - Pandas
