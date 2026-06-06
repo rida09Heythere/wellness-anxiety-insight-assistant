@@ -14,6 +14,10 @@
 - Google Sheets integration
 - Data visualization and exploratory analysis
 - Machine learning-based anxiety pattern analysis
+- -Personalized recommendation engine
+- -Multi-trigger support
+- Custom trigger handling
+
 
 **Tech Stack**
 
@@ -66,3 +70,15 @@ To analyze how lifestyle factors, anxiety triggers, coping methods, and wellness
 - Gender-Based Comparisons
 - Menstrual Cycle Phase Analysis
 - Data Visualization using Matplotlib and Pandas
+
+## Recommendation Engine (V1)
+
+A rule-based recommendation engine has been integrated into the Wellness & Anxiety Insight Assistant.
+
+### Features
+- Generates personalized recommendations based on user-reported anxiety triggers.
+- Supports multiple triggers simultaneously.
+- Handles custom user-defined triggers with fallback recommendations.
+- Integrated directly into the Telegram chatbot workflow.
+
+
