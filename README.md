@@ -32,6 +32,7 @@
 - Flask
 - ML
 - Numpy
+- Tableua
 
 **Workflow**
 
@@ -80,5 +81,16 @@ A rule-based recommendation engine has been integrated into the Wellness & Anxie
 - Supports multiple triggers simultaneously.
 - Handles custom user-defined triggers with fallback recommendations.
 - Integrated directly into the Telegram chatbot workflow.
+
+##Data Analytics & Visualizatiion interactive Dashboard using Tableau
+-Cleaned raw data using python
+-Built interactive Tableau dashboard visualizing :
+ - Most common anxiety triggers
+ - emotions experienced during anxiety
+ - Coping Methods used
+ - gender breakdown
+ANXIETY BEHAVIOUR PATTERN DASHBOARD
+
+LINK (LIVE LINK)::https://public.tableau.com/app/profile/rida.rafique/viz/AnxietyBehaviourPatternDashboard/Anxietybehaviourpatterndashboard?publish=yes
 
 
